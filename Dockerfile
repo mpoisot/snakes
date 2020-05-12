@@ -26,9 +26,11 @@ FROM prod as dev
 
 # TODO
 # install dev friendly apt-get and pip stuff. Git. VScode remote connection stuff. Jupiter packages.
-RUN apt-get install -y --no-install-recommends git && \
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends git && \
   rm -rf /var/lib/apt/lists/*
-RUN pip install jupyter
+
+RUN pip install jupyter pylint black
 
 WORKDIR /app
 
