@@ -4,23 +4,29 @@ RUN apt-get update && \
   apt-get install -y --no-install-recommends python3-dev gcc && \
   rm -rf /var/lib/apt/lists/*
 
-# Non-cuda (CPU only) pytorch libs save almost 2 GIGs off the final docker image.
-RUN pip install --no-cache-dir \
+# Non-cuda (CPU only) pytorch libs save more than a GIG vs a simple `pip install torch torchvision`.
+# Even so, python libs still contribute >700 MB.
+# Get exact pytorch PIP cmd from this page, using settings: stable, linux, pip, python, CUDA=none.
+# https://pytorch.org/get-started/locally/
+
+RUN pip install --quiet --no-cache-dir \
   starlette uvicorn python-multipart aiohttp \
   torch==1.5.0+cpu torchvision==0.6.0+cpu -f https://download.pytorch.org/whl/torch_stable.html \
   fastai~=1.0
 
-WORKDIR /app
-COPY cougar.py cougar.py
-COPY export.pkl export.pkl
-
-# Run it once to trigger resnet download
-RUN python cougar.py
-
 
 ##########################################
 
-FROM base as prod
+FROM python:3.8-slim-buster as prod
+
+COPY --from=base /usr/local/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
+
+WORKDIR /app
+COPY cougar.py cougar.py
+COPY training/trained_model.pkl training/trained_model.pkl
+
+# Run it once to trigger resnet download
+RUN python cougar.py
 
 EXPOSE ${PORT}
 
@@ -47,4 +53,5 @@ WORKDIR /app
 EXPOSE ${PORT}
 
 # Start the server. Shell CMD so process sees all ENV vars
+# Expects code to be mounted over /app
 CMD python cougar.py serve

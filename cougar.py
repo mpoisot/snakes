@@ -55,7 +55,7 @@ app = Starlette()
 #     torch.load("usa-inaturalist-cats.pth", map_location="cpu")
 # )
 
-learner = load_learner(Path("/app"), Path("/app/export.pkl"))
+learner = load_learner(Path("/app"), Path("/app/training/trained_model.pkl"))
 
 
 @app.route("/upload", methods=["POST"])
