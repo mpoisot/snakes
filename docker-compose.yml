@@ -6,13 +6,17 @@ services:
       context: .
       target: prod
     ports:
-      - "8008:8008"
+      - "8009:8009"
+    environment:
+      PORT: "8009"
   dev:
     container_name: snake_dev
     build:
       context: .
       target: dev
     ports:
-      - "8008:8008"
+      - "8009:8009"
+    environment:
+      PORT: "8009"
     # Needed for multi-worker image fetching/transforming when training
     shm_size: "2gb"

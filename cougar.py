@@ -15,6 +15,7 @@ import sys
 import uvicorn
 import aiohttp
 import asyncio
+import os
 
 
 async def get_bytes(url):
@@ -110,4 +111,10 @@ def redirect_to_homepage(request):
 
 if __name__ == "__main__":
     if "serve" in sys.argv:
-        uvicorn.run(app, host="0.0.0.0", port=8008)
+        port = os.environ.get("PORT")
+        if not port:
+            print(
+                "Error: PORT environment variable must be set. The server will listen on this port."
+            )
+            exit(-1)
+        uvicorn.run(app, host="0.0.0.0", port=port)

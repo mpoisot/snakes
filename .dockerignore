@@ -1,2 +1,15 @@
-.DS_Store
+# Specific to .dockerignore
 .git
+
+.DS_Store
+.vscode
+.now
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Specific to this project
+images

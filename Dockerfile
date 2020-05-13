@@ -1,11 +1,14 @@
-FROM python:3.8-slim-buster as prod
+FROM python:3.8-slim-buster as base
 
 RUN apt-get update && \
   apt-get install -y --no-install-recommends python3-dev gcc && \
   rm -rf /var/lib/apt/lists/*
 
-RUN pip install torch~=1.5 fastai~=1.0
-RUN pip install starlette uvicorn python-multipart aiohttp
+# Non-cuda (CPU only) pytorch libs save almost 2 GIGs off the final docker image.
+RUN pip install --no-cache-dir \
+  starlette uvicorn python-multipart aiohttp \
+  torch==1.5.0+cpu torchvision==0.6.0+cpu -f https://download.pytorch.org/whl/torch_stable.html \
+  fastai~=1.0
 
 WORKDIR /app
 COPY cougar.py cougar.py
@@ -14,27 +17,34 @@ COPY export.pkl export.pkl
 # Run it once to trigger resnet download
 RUN python cougar.py
 
-EXPOSE 8008
 
-# Start the server
-CMD ["python", "cougar.py", "serve"]
+##########################################
+
+FROM base as prod
+
+EXPOSE ${PORT}
+
+# Run the image as a non-root user to ensure it will work on Heroku
+RUN adduser --disabled-password --gecos '' someuser
+USER someuser
+
+# Start the server. Shell CMD so process sees all ENV vars
+CMD python cougar.py serve
 
 
 ##########################################
 
-FROM prod as dev
+FROM base as dev
 
-# TODO
-# install dev friendly apt-get and pip stuff. Git. VScode remote connection stuff. Jupiter packages.
 RUN apt-get update && \
   apt-get install -y --no-install-recommends git && \
   rm -rf /var/lib/apt/lists/*
 
-RUN pip install jupyter pylint black
+RUN pip install --quiet --no-cache-dir jupyter pylint black
 
 WORKDIR /app
 
-EXPOSE 8008
+EXPOSE ${PORT}
 
-# Start the server
-CMD ["python", "cougar.py", "serve"]
+# Start the server. Shell CMD so process sees all ENV vars
+CMD python cougar.py serve
