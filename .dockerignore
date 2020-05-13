@@ -12,4 +12,5 @@
 .env.production.local
 
 # Specific to this project
-images
+training/images
+training/models
