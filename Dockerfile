@@ -25,9 +25,6 @@ WORKDIR /app
 COPY cougar.py cougar.py
 COPY training/trained_model.pkl training/trained_model.pkl
 
-# Run it once to trigger resnet download
-RUN python cougar.py
-
 EXPOSE ${PORT}
 
 # Run the image as a non-root user to ensure it will work on Heroku
@@ -42,11 +39,15 @@ CMD python cougar.py serve
 
 FROM base as dev
 
+# Download pretrained models
+COPY download.py download.py
+RUN python download.py
+
 RUN apt-get update && \
   apt-get install -y --no-install-recommends git && \
   rm -rf /var/lib/apt/lists/*
 
-RUN pip install --quiet --no-cache-dir jupyter pylint black
+RUN pip install --quiet --no-cache-dir jupyter notebook jupyter_contrib_nbextensions pylint black
 
 WORKDIR /app
 
