@@ -20,7 +20,7 @@ learner = load_learner(Path("/app"), Path("/app/training/trained_model.pkl"))
 
 # TODO: less open CORS def. We'd need to pass the frontend server's domain name via ENV var.
 middleware = [Middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"])]
-app = Starlette(middleware=middleware, debug=True)
+app = Starlette(middleware=middleware)
 
 
 @app.route("/upload", methods=["POST"])
@@ -32,10 +32,8 @@ async def upload(request):
 
 @app.route("/classify-url", methods=["POST"])
 async def classify_url(request):
-    data = await request.form()
-    url = data["url"]
-    print(f"url = {url} ")
-    bytes = await get_bytes(url)
+    data = await request.json()
+    bytes = await get_bytes(data["url"])
     return predict_image_from_bytes(bytes)
 
 
@@ -69,11 +67,6 @@ def form(request):
             <input type="file" name="file">
             <input type="submit" value="Upload Image">
         </form>
-        Or submit a URL:
-        <form action="/classify-url" method="get">
-            <input type="url" name="url">
-            <input type="submit" value="Fetch and analyze image">
-        </form>
     """
     )
 
@@ -86,4 +79,4 @@ if __name__ == "__main__":
                 "Error: PORT environment variable must be set. The server will listen on this port."
             )
             exit(-1)
-        uvicorn.run(app, host="0.0.0.0", port=port)
+        uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
