@@ -1,13 +1,11 @@
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse, HTMLResponse, RedirectResponse
 from fastai.vision import (
-    # ImageDataBunch,
-    # ConvLearner,
     open_image,
-    # get_transforms,
-    # models,
     load_learner,
 )
+from starlette.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
 import torch
 from pathlib import Path
 from io import BytesIO
@@ -18,44 +16,11 @@ import asyncio
 import os
 
 
-async def get_bytes(url):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            return await response.read()
-
-
-app = Starlette()
-
-# cat_images_path = Path("/tmp")
-# cat_fnames = [
-#     "/{}_1.jpg".format(c)
-#     for c in [
-#         "Bobcat",
-#         "Mountain-Lion",
-#         "Domestic-Cat",
-#         "Western-Bobcat",
-#         "Canada-Lynx",
-#         "North-American-Mountain-Lion",
-#         "Eastern-Bobcat",
-#         "Central-American-Ocelot",
-#         "Ocelot",
-#         "Jaguar",
-#     ]
-# ]
-# cat_data = ImageDataBunch.from_name_re(
-#     cat_images_path,
-#     cat_fnames,
-#     r"/([^/]+)_\d+.jpg$",
-#     ds_tfms=get_transforms(),
-#     size=224,
-# )
-
-# cat_learner = ConvLearner(cat_data, models.resnet34)
-# cat_learner.model.load_state_dict(
-#     torch.load("usa-inaturalist-cats.pth", map_location="cpu")
-# )
-
 learner = load_learner(Path("/app"), Path("/app/training/trained_model.pkl"))
+
+# TODO: less open CORS def. We'd need to pass the frontend server's domain name via ENV var.
+middleware = [Middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"])]
+app = Starlette(middleware=middleware, debug=True)
 
 
 @app.route("/upload", methods=["POST"])
@@ -65,15 +30,24 @@ async def upload(request):
     return predict_image_from_bytes(bytes)
 
 
-@app.route("/classify-url", methods=["GET"])
+@app.route("/classify-url", methods=["POST"])
 async def classify_url(request):
-    bytes = await get_bytes(request.query_params["url"])
+    data = await request.form()
+    url = data["url"]
+    print(f"url = {url} ")
+    bytes = await get_bytes(url)
     return predict_image_from_bytes(bytes)
+
+
+async def get_bytes(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            return await response.read()
 
 
 def predict_image_from_bytes(bytes):
     img = open_image(BytesIO(bytes))
-    pred_class, pred_idx, outputs = learner.predict(img)
+    _pred_class, _pred_idx, outputs = learner.predict(img)
 
     return JSONResponse(
         {
@@ -104,14 +78,9 @@ def form(request):
     )
 
 
-@app.route("/form")
-def redirect_to_homepage(request):
-    return RedirectResponse("/")
-
-
 if __name__ == "__main__":
     if "serve" in sys.argv:
-        port = os.environ.get("PORT")
+        port = int(os.environ.get("PORT"))
         if not port:
             print(
                 "Error: PORT environment variable must be set. The server will listen on this port."

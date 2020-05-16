@@ -23,18 +23,15 @@
   "extensions": [
     "ms-python.python",
     "donjayamanne.githistory",
-    "mechatroner.rainbow-csv"
   ],
   // Uncomment the next line if you want start specific services in your Docker Compose config.
   "runServices": [
     "dev"
-  ]
+  ],
   // Uncomment the next line if you want to keep your containers running after VS Code shuts down.
   // "shutdownAction": "none",
   // Uncomment the next line to run commands after the container is created - for example installing git.
   // "postCreateCommand": "apt-get update && apt-get install -y git",
   // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
   // "remoteUser": "vscode"
-  // Uncomment to skip VSCode's default CMD infinite loop and use the one in the original Dockerfile.
-  // "overrideCommand": false
 }
