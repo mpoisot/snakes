@@ -24,8 +24,8 @@ img_class_path.ls()
 
 
 # %%
-for p in img_class_path.ls():
-    verify_images(p, delete=True)
+# for p in img_class_path.ls():
+#     verify_images(p, delete=True)
 
 
 # %%
