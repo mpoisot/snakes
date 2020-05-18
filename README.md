@@ -72,3 +72,9 @@ Next I used unfroze the model, used the learning rate finder and a few iteration
 - extensions
 - jupyter vs #%% in .py files. Convert.
 - doc() doesn't work
+
+## Demo
+
+- link to demo site
+
+testing image ![training stage 1](readme/train1.png)
