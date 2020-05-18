@@ -18,5 +18,7 @@ services:
       - "8009:8009"
     environment:
       PORT: "8009"
+    volumes:
+      - .:/app:delegated
     # Needed for multi-worker image fetching/transforming when training
     shm_size: "2gb"
