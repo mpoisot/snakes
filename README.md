@@ -77,4 +77,4 @@ Next I used unfroze the model, used the learning rate finder and a few iteration
 
 - link to demo site
 
-testing image ![training stage 1](readme/train1.png)
+<img alt='training stage 1' src='readme/train1.png' height='100' />
