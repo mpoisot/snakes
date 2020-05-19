@@ -78,3 +78,5 @@ Next I used unfroze the model, used the learning rate finder and a few iteration
 - link to demo site
 
 testing image ![training stage 1](readme/train1.png){:height="36px" width="36px"}
+
+<img src='readme/train1.png' alt='training' height='20' width='20' />
