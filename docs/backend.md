@@ -29,6 +29,7 @@ I wrapped the trained model with a Python-based web server that accepts either a
 
 - motivation
 - docker & compose
+- gradient vs local
 - extensions
 - jupyter vs #%% in .py files. Convert.
 - doc() doesn't work
