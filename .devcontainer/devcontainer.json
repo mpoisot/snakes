@@ -5,10 +5,7 @@
   "name": "Existing Docker Compose (Extend)",
   // Update the 'dockerComposeFile' list if you have more compose files or use different names.
   // The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
-  "dockerComposeFile": [
-    "../docker-compose.yml",
-    "docker-compose.yml"
-  ],
+  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.yml"],
   // The 'service' property is the name of the service for the container that VS Code should
   // use. Update this value and .devcontainer/docker-compose.yml to the real service name.
   "service": "dev",
@@ -23,11 +20,10 @@
   "extensions": [
     "ms-python.python",
     "donjayamanne.githistory",
+    "bierner.markdown-preview-github-styles"
   ],
   // Uncomment the next line if you want start specific services in your Docker Compose config.
-  "runServices": [
-    "dev"
-  ],
+  "runServices": ["dev"],
   // Tell VScode to use venv
   "python.pythonPath": "/opt/venv/bin/python"
   // Uncomment the next line if you want to keep your containers running after VS Code shuts down.
