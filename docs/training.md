@@ -88,27 +88,3 @@ At this point the model is only getting 4 out of 85 images wrong.
 ### Model Export
 
 Exporting the trained model is an simple one-liner. The result is a single file just shy of 90 MB. I use this exported model in the [backend server](backend.md) to expose an API for web based inferences.
-
-## Jupyter Notebooks vs Regular Python in VScode
-
-The VScode [Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) is fully featured. It can display Jupyter notebook files, although some things like `doc()` don't work at all.
-
-More interestingly, for regular .py files it can display python output similar to a notebook when a section of code uses the magic comment `# %%`. Big whoop, they reinvented Jupyter. Why bother?
-
-After reading an article on the subject I realized that code diffing can be a nightmare with Jupyter files, but with .py files it works great. Moreover, the VScode python extension comes with actions to convert from .py to .ipynb and back.
-
-VScode command palette (CMD+P):
-
-```
-> Python: Export Current Python File as Jupyter Notebook
-> Python: Export Current Python File and Output as Jupyter Notebook
-> Python: Convert to Python Script
-```
-
-Converting modifies some of the nicer looking imports into an uglier (but presumably equally functional) form. Aside from that it all works great for me so far.
-
-Another benefit to workting in .py files is VScode's intellisense, code formatting, etc. all work as expected. They either don't work or don't work well in the .ipynb format.
-
-So my current method is to work on .py files directly, and then export to .ipynb when I want to work in Jupyter. I treat the .py file as the single source of truth, and the .ipynb can be trashed or overwritten as needed.
-
-
