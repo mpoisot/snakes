@@ -1,8 +1,58 @@
+# Top level requirements:
+
+# starlette
+# uvicorn
+# python-multipart
+# aiohttp
+# torch==1.5.0+cpu
+# torchvision==0.6.0+cpu
+# fastai~=1.0
+
+# Non-cuda (CPU only) pytorch libs save more than a GIG vs a simple `pip install torch torchvision`.
+# Even so, python libs still contribute >700 MB.
+# Get exact pytorch PIP cmd from this page, using settings: stable, linux, pip, python, CUDA=none.
+# https://pytorch.org/get-started/locally/
+
 --find-links https://download.pytorch.org/whl/torch_stable.html
-starlette
-uvicorn
-python-multipart
-aiohttp
+
+aiohttp==3.6.2
+async-timeout==3.0.1
+attrs==19.3.0
+beautifulsoup4==4.9.1
+Bottleneck==1.3.2
+certifi==2020.4.5.1
+chardet==3.0.4
+click==7.1.2
+cycler==0.10.0
+fastai==1.0.61
+fastprogress==0.2.3
+future==0.18.2
+h11==0.9.0
+httptools==0.1.1
+idna==2.9
+kiwisolver==1.2.0
+matplotlib==3.2.1
+multidict==4.7.6
+numexpr==2.7.1
+numpy==1.18.4
+nvidia-ml-py3==7.352.0
+packaging==20.3
+pandas==1.0.3
+Pillow==7.1.2
+pyparsing==2.4.7
+python-dateutil==2.8.1
+python-multipart==0.0.5
+pytz==2020.1
+PyYAML==5.3.1
+requests==2.23.0
+scipy==1.4.1
+six==1.14.0
+soupsieve==2.0.1
+starlette==0.13.4
 torch==1.5.0+cpu
 torchvision==0.6.0+cpu
-fastai~=1.0
+urllib3==1.25.9
+uvicorn==0.11.5
+uvloop==0.14.0
+websockets==8.1
+yarl==1.4.2
