@@ -15,8 +15,7 @@ from fastai.metrics import error_rate
 
 
 # %%
-app_root = Path(os.getcwd())
-train_path = app_root / "training"
+train_path = Path(os.getcwd()) / "../training"
 img_class_path = train_path / "images/classes"
 
 print(train_path.ls())

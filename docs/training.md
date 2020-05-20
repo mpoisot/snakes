@@ -50,7 +50,7 @@ In the end I came up with 233 images of coral snakes and 193 images of king snak
 
 ## Training
 
-Look at [snakes.py](../snakes.py) to see how I created the model. (Or alternatively [_snakes.ipynb](../_snakes.ipynb) which is derived from snakes.py but is possibly out of date and missing nice outputs).
+Look at [snakes.py](../code/snakes.py) to see how I created the model. (Or alternatively [_snakes.ipynb](../code/_snakes.ipynb) which is derived from snakes.py but is possibly out of date and missing nice outputs).
 
 The starting model is a resnet34 model pretrained on [ImageNet](http://www.image-net.org/) data. The images are split into 80% training, 20% validation, with default image transformations that produce 299x299 images.
 

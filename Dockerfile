@@ -9,17 +9,8 @@ RUN apt-get update && \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Non-cuda (CPU only) pytorch libs save more than a GIG vs a simple `pip install torch torchvision`.
-# Even so, python libs still contribute >700 MB.
-# Get exact pytorch PIP cmd from this page, using settings: stable, linux, pip, python, CUDA=none.
-# https://pytorch.org/get-started/locally/
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-# RUN pip install --quiet --no-cache-dir \
-#   starlette uvicorn python-multipart aiohttp \
-#   torch==1.5.0+cpu torchvision==0.6.0+cpu --find-links https://download.pytorch.org/whl/torch_stable.html \
-#   fastai~=1.0
-
 
 ##########################################
 
@@ -30,7 +21,7 @@ COPY --from=base /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /app
-COPY server.py server.py
+COPY code/server.py code/server.py
 COPY training/trained_model.pkl training/trained_model.pkl
 
 EXPOSE ${PORT}
@@ -40,7 +31,7 @@ RUN adduser --disabled-password --gecos '' someuser
 USER someuser
 
 # Start the server. Shell CMD so process sees all ENV vars
-CMD uvicorn server:app --host 0.0.0.0 --port $PORT
+CMD cd code && uvicorn server:app --host 0.0.0.0 --port $PORT
 
 ##########################################
 
@@ -51,8 +42,8 @@ COPY --from=base /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Download pretrained models
-COPY download.py download.py
-RUN python download.py
+COPY code/download.py code/download.py
+RUN python code/download.py
 
 RUN apt-get update && \
   apt-get install -y --no-install-recommends git procps && \
@@ -66,4 +57,4 @@ EXPOSE ${PORT}
 
 # Start the server. Shell CMD so process sees all ENV vars
 # Expects code to be mounted over /app
-CMD uvicorn server:app --host 0.0.0.0 --port $PORT  --reload
+CMD cd code && uvicorn server:app --host 0.0.0.0 --port $PORT  --reload
