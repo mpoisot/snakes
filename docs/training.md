@@ -66,7 +66,7 @@ Only 6 out of 85 images are misclassified.
 
 Top losses: the images where the model scored the worst. 6 are incorrectly classified, the remaining 3 are correct but the model was not very confident.
 
-<div><img alt='confusion matrix 1' src='training/toplosses1.png' height='450' /></div>
+<div><img alt='top losses 1' src='training/toplosses1.png' height='450' /></div>
 
 ### Stage 2
 
@@ -74,11 +74,18 @@ Next I unfroze the model so that learning applied to all layers. I performed a f
 
 <div><img alt='learning rate finder' src='training/lr_finder.png' height='250' /></div>
 
-I ran another 4 epochs using this new learning rate rate on the unfrozen model. I get better than 5% accuracy on the first round. But it looks like the model is overfitting because while the train_loss gets better, the valid_loss gets worse on epoch 2.
+I ran another 4 epochs using this new learning rate rate on the unfrozen model. It's get better than 5% accuracy on the first round. But it looks like the model is overfitting because while the train_loss gets better, the valid_loss gets worse starting on epoch 2.
 
 <div><img alt='training stage 2' src='training/train2.png' height='150' /></div>
 
-### Export
+At this point the model is only getting 4 out of 85 images wrong.
+
+<div><img alt='confusion matrix 2' src='training/confuse2.png' height='250' /></div>
+
+<div><img alt='top losses 2' src='training/toplosses2.png' height='450' /></div>
+
+
+### Model Export
 
 Exporting the trained model is an simple one-liner. The result is a single file just shy of 90 MB. I use this exported model in the [backend server](backend.md) to expose an API for web based inferences.
 
@@ -88,7 +95,7 @@ The VScode [Python Extension](https://marketplace.visualstudio.com/items?itemNam
 
 More interestingly, for regular .py files it can display python output similar to a notebook when a section of code uses the magic comment `# %%`. Big whoop, they reinvented Jupyter. Why bother?
 
-After reading an article on the subject I realized that code diffing is a nightmare with Jupyter files, but with .py files it works great. Moreover, the VScode python extension comes with actions to convert from .py to .ipynb and back.
+After reading an article on the subject I realized that code diffing can be a nightmare with Jupyter files, but with .py files it works great. Moreover, the VScode python extension comes with actions to convert from .py to .ipynb and back.
 
 VScode command palette (CMD+P):
 
