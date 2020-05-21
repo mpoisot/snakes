@@ -1,6 +1,6 @@
 # Training The Model
 
-*Note: this goes into a lot of small details because it's mostly for my future self and to help remind me why it took so long to get this project working. I'm writing it ~2 weeks after I did the work so some of the details are likely incorrect.*
+_Note: this goes into a lot of small details because it's mostly for my future self and to help remind me why it took so long to get this project working. I'm writing it ~2 weeks after I did the work so some of the details are likely incorrect._
 
 Getting a good dataset was the hardest part of this whole project! Sure, I could have used an existing dataset but that didn't seem satisfying. The [2019 lesson 2 notebook](https://nbviewer.jupyter.org/github/fastai/course-v3/blob/master/nbs/dl1/lesson2-download.ipynb) and discussion forum described several ways to harvest images from Google Images, but I ran into lots problems getting any of those to work well. Perhaps it was due to popup blockers, chrome security constantly getting tighter, or Google Images changes their html.
 
@@ -16,7 +16,7 @@ I used some kind of script to grab about 75 images from each group. Then I used 
 
 I decided to up my image harvesting game. I downloaded the [FastClass](https://github.com/cwerner/fastclass) utility program that was written by a student the previous year. It worked pretty well, and I liked how it got images from Bing in addition to Google. I got about 150 images for each class and trained on that, resulting in about 90% accuracy. Better, but I still felt I needed more data.
 
-I experimented with Flickr search I felt the image quality and variety was excellent compared to Google and Bing. So I decided to tinker with FastClass to add support for Flickr images. 
+I experimented with Flickr search I felt the image quality and variety was excellent compared to Google and Bing. So I decided to tinker with FastClass to add support for Flickr images.
 
 ## FastClass Harvester Tangent
 
@@ -26,11 +26,11 @@ I cloned the repo and got [VS Code](https://code.visualstudio.com/) spiffed up w
 
 After a deep dive I got Flickr added to FastClass. I thought it was pretty useful so I pull-requested my new feature back to cwerner's project. It was accepted, but I learned that the formatter I used changed a ton of code spacing and whatnot, and that can be pretty annoying. Fortunately it wasn't hard for cwerner to apply his own formatter to change it all back as part of the pull request. Cwerner uses the [black](https://github.com/psf/black) formatter, so I took and I felt it produced nicer looking output so I changed my settings.
 
-Along the way I realized FastClass fits rectangular images into a square shape, and fills the gap with white. Square images are easier for training, so it makes sense to square them. But I remembered the instructor talking about how padding with a solid color is less good than mirroring the image, so I wondered if that the stark white padding was hurting my results. 
+Along the way I realized FastClass fits rectangular images into a square shape, and fills the gap with white. Square images are easier for training, so it makes sense to square them. But I remembered the instructor talking about how padding with a solid color is less good than mirroring the image, so I wondered if that the stark white padding was hurting my results.
 
-I perused the Fast.ai docs and saw that fast.ai will automatically do random crops into the image and apply the mirror effect as needed. It also does all kinds of other transformations on images such as stretching, messing with brightness and contrast, rotations, etc. These are called *augmentations*, and are a recommended technique to avoid overtraining on the exact pixels and force generalization. Augmentations are applied to the original images on *every* epoch, so each round of learing sees slightly different variations of the same image.
+I perused the Fast.ai docs and saw that fast.ai will automatically do random crops into the image and apply the mirror effect as needed. It also does all kinds of other transformations on images such as stretching, messing with brightness and contrast, rotations, etc. These are called _augmentations_, and are a recommended technique to avoid overtraining on the exact pixels and force generalization. Augmentations are applied to the original images on _every_ epoch, so each round of learning sees slightly different variations of the same image.
 
-So I dug into the FastClass code and added the ability to *not* pad the images, nor try to fit into a square. Instead the images are kept rectangular, proportionally resized with the longer size conforming to the `size` setting. This way I can let fast.ai's transformations do their thing on the fly to create augmented square images on the fly. I figured I really needed to I could crop square images manually to keep the main subject in frame. I did not PR that code back to the main repo because of merge conflicts, and I'm not sure if anyone else thinks this feature is useful. Ideally I would run some tests to compare white padded square crops vs rectangular images. But that would be yet another tangent.
+So I dug into the FastClass code and added the ability to _not_ pad the images, nor try to fit into a square. Instead the images are kept rectangular, proportionally resized with the longer size conforming to the `size` setting. This way I can let fast.ai's transformations do their thing on the fly to create augmented square images on the fly. I figured I really needed to I could crop square images manually to keep the main subject in frame. I did not PR that code back to the main repo because of merge conflicts, and I'm not sure if anyone else thinks this feature is useful. Ideally I would run some tests to compare white padded square crops vs rectangular images. But that would be yet another tangent.
 
 Whew. Finally I could get back to actually harvesting images.
 
@@ -50,7 +50,7 @@ In the end I came up with 233 images of coral snakes and 193 images of king snak
 
 ## Training
 
-Look at [snakes.py](../code/snakes.py) to see how I created the model. (Or alternatively [_snakes.ipynb](../code/_snakes.ipynb) which is derived from snakes.py but is possibly out of date and missing nice outputs).
+Look at [snakes.py](../code/snakes.py) to see how I created the model. (Or alternatively [\_snakes.ipynb](../code/_snakes.ipynb) which is derived from snakes.py but is possibly out of date and missing nice outputs).
 
 The starting model is a resnet34 model pretrained on [ImageNet](http://www.image-net.org/) data. The images are split into 80% training, 20% validation, with default image transformations that produce 299x299 images.
 
@@ -70,7 +70,7 @@ Top losses: the images where the model scored the worst. 6 are incorrectly class
 
 ### Stage 2
 
-Next I unfroze the model so that learning applied to all layers. I performed a few iterations with the learning rate finder tool. I picked a max learning rate of `1e-4` for the early layers, and kept the recommended `3e-4` rate for the final layers. 
+Next I unfroze the model so that learning applied to all layers. I performed a few iterations with the learning rate finder tool. I picked a max learning rate of `1e-4` for the early layers, and kept the recommended `3e-4` rate for the final layers.
 
 <div><img alt='learning rate finder' src='training/lr_finder.png' height='250' /></div>
 
@@ -83,7 +83,6 @@ At this point the model is only getting 4 out of 85 images wrong.
 <div><img alt='confusion matrix 2' src='training/confuse2.png' height='250' /></div>
 
 <div><img alt='top losses 2' src='training/toplosses2.png' height='450' /></div>
-
 
 ### Model Export
 

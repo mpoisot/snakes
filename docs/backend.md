@@ -1,8 +1,10 @@
 # Backend Python API Server
 
+_Note: this goes into a lot of small details because it's mostly for my future self and to help remind me why it took so long to get this project working. I'm writing it ~2 weeks after I did the work so some of the details are likely incorrect._
+
 The raw model is made available online by a barebones webserver. The backend wraps the trained model exported by the [training environment](training.md) with a Python-based web server that accepts either an uploaded image file or URL, and returns the prediction data as JSON.
 
-The server's homepage can be used on it's own, but the intention is for it to be a API consumed by a friendlier [frontend](frontend.md) web service.
+The server's homepage can be used on it's own, but the intention is for it to be a API consumed by a friendlier [frontend](https://github.com/mpoisot/snakes_front) web service.
 
 ## Cougar or Not
 
@@ -16,11 +18,11 @@ First things first. I needed to get Cougar or Not working on my local dev machin
 
 No worries, that's what [Docker](https://www.docker.com/) is for. I hope. I've been meaning to take a deep dive into Docker for years so this felt like a worthy deep dive.
 
-"Docker for Desktop" is a super easy one click install on MacOS. But it took a solid week of reading and fiddling to wrap my head around how Docker works, how to build and optimize images, how Compose works and if I should use it, and how to get my nice devlelopment environment all figured out. And then several more days to actually export a working server to a cloud provider.
+"Docker for Desktop" is a super easy one click install on MacOS. But it took a solid week of reading and fiddling to wrap my head around how Docker works, how to build and optimize images, how Compose works and if I should use it, and how to get my nice development environment all figured out. And then several more days to actually export a working server to a cloud provider.
 
 ## Docker
 
-Here's the [Dockerfile]([Dockerfile](../Dockerfile)). Lots of lessons learned along the way.
+Here's the [Dockerfile](<[Dockerfile](../Dockerfile)>). Lots of lessons learned along the way.
 
 Alpine linux is attractively small as the starting image, weighing in at only 5 MB. But it uses a different C compiler that breaks many things, including Pytorch and VScode. So use a "slim" version of Debian instead. Better yet, use a slim debian image with python goodies already installed. Weight: ~200 MB for python:3.8-slim-buster.
 
@@ -56,7 +58,7 @@ I ran into annoying crashes trying to load images for training. The reason has t
 
 ### Volume Mount
 
-For development it's really convenient to just mount the whole project folder into the container. However there can be performance issues keeping things in sync. I'm using the `:delegated` flag which provides the [most performant](https://docs.docker.com/docker-for-mac/osxfs-caching/) version of shared volumes on MacOS, but with some risk of weirdness. So far I haven't had any issues. 
+For development it's really convenient to just mount the whole project folder into the container. However there can be performance issues keeping things in sync. I'm using the `:delegated` flag which provides the [most performant](https://docs.docker.com/docker-for-mac/osxfs-caching/) version of shared volumes on MacOS, but with some risk of weirdness. So far I haven't had any issues.
 
 ### Docker Desktop Default Resource Limits
 
@@ -64,18 +66,18 @@ Docker Desktop for Mac has system [resource limits](https://docs.docker.com/dock
 
 ## VS Code & Docker
 
-It turns out VScode has an excellent official [docker extension](https://code.visualstudio.com/docs/remote/containers). There's an ok GUI for starting and stopping containers, but really the command line is better for that. 
+It turns out VScode has an excellent official [docker extension](https://code.visualstudio.com/docs/remote/containers). There's an ok GUI for starting and stopping containers, but really the command line is better for that.
 
-What's amazing is VSCode can connect to container and run from *inside* there. That means intellisense happily finds those linux-only python libraries that wouldn't install in MacOS land. I can run Jupyter notebooks and interactive python files and everything works.
+What's amazing is VSCode can connect to container and run from _inside_ there. That means intellisense happily finds those linux-only python libraries that wouldn't install in MacOS land. I can run Jupyter notebooks and interactive python files and everything works.
 
 ### devcontainer.json
 
-VScode uses [devcontainer.json](../.devcontainer/devcontainer.json) to configure the instance of VScode that runs *inside* the container. Here are a few key fields I modified and the [docs](https://code.visualstudio.com/docs/remote/containers#_devcontainerjson-reference).
+VScode uses [devcontainer.json](../.devcontainer/devcontainer.json) to configure the instance of VScode that runs _inside_ the container. Here are a few key fields I modified and the [docs](https://code.visualstudio.com/docs/remote/containers#_devcontainerjson-reference).
 
 - `service` & `runServices` This is the service name in the Compose file to build and run the default container for this project. Since I only run one of the 2 services at any given time, `runServices` needs to be set or it defaults to starting all services. Initially for prod and dev use the same server port which meant bind failures trying to start both.
 - `workspaceFolder` before I set this VS Code would ask every time where to find the workspace files. Set it to the same folder where the project is mounted (or where your code is COPY'd).
 - `extensions` these VScode extensions are automatically installed inside the container. Otherwise you have to manually install them from the extensions every time the container changes.
-- `python.pythonPath` set to the locatation of the python executable. I had to set this after switching to virtualenv.
+- `python.pythonPath` set to the location of the python executable. I had to set this after switching to virtualenv.
 
 ### .devcontainer/docker-compose.yml
 
@@ -95,7 +97,7 @@ So my current method is to work on .py files directly, and then export to .ipynb
 
 ### Hosted GPU Server vs Local
 
-I've been using [Gradient by Paperspace](https://gradient.paperspace.com/) as a GPU powered Jupyter host. They have a free plan that works just fine for this kind of project. The Nvidia P5000 16 GB GPUs complete training 10-20x faster than my laptop. 
+I've been using [Gradient by Paperspace](https://gradient.paperspace.com/) as a GPU powered Jupyter host. They have a free plan that works just fine for this kind of project. The Nvidia P5000 16 GB GPUs complete training 10-20x faster than my laptop.
 
 #### Code Sync
 
@@ -121,11 +123,11 @@ The server exposes 3 endpoints:
 
 After I got everything working on my local box I looked into deploying the Docker image to Zeit.co as the Cougar or Not author suggested. It turns out (A) Zeit is now [Vercel](https://vercel.com/), and (B) they no longer accept docker images. Doh!
 
-Instead they've moved on to fancy [serverless functions](https://vercel.com/docs/v2/serverless-functions/introduction). They do allow python, and will [install whatever libs](https://vercel.com/docs/runtimes#official-runtimes/python/python-dependencies) you need from requirements.txt. Ok great. **Nope**, there is a hard 50 MB limit on function size, which apparently includes all libs. My serverless build was clocking in close to a **1 GB**. 
+Instead they've moved on to fancy [serverless functions](https://vercel.com/docs/v2/serverless-functions/introduction). They do allow python, and will [install whatever libs](https://vercel.com/docs/runtimes#official-runtimes/python/python-dependencies) you need from requirements.txt. Ok great. **Nope**, there is a hard 50 MB limit on function size, which apparently includes all libs. My serverless build was clocking in close to a **1 GB**.
 
 ### Heroku
 
-Fortunately [Heroku](https://www.heroku.com/) accepts Docker images even on the free tier, and there aren't [hard limits on image size](https://devcenter.heroku.com/articles/container-registry-and-runtime#known-issues-and-limitations) (slug size). The deploy worked! Finally. 
+Fortunately [Heroku](https://www.heroku.com/) accepts Docker images even on the free tier, and there aren't [hard limits on image size](https://devcenter.heroku.com/articles/container-registry-and-runtime#known-issues-and-limitations) (slug size). The deploy worked! Finally.
 
 However, that initial deploy image weighed in at **3 GB**. Yowsa! It took forever to upload, I'm bet it slows down wake times (free tier servers are put to sleep), and who knows when Heroku will decide to impose a hard limit.
 
