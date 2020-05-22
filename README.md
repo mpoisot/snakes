@@ -24,6 +24,17 @@ The frontend server provides a nicer interface to the backend API. This is imple
 
 [View the live demo](https://snakes.poisot.com/). The frontend is hosted with [Vercel](https://vercel.com), the backend is hosted on [Heroku](https://www.heroku.com/). The Heroku server is using the free tier. The downside is the server is put to sleep after a period of inactivity, so the initial initial upload will have a noticeable 15 second delay before the progress bar moves beyond 0%.
 
+## Run Locally
+
+Prerequisites:
+
+- Docker
+- Git clone this repository
+
+In the project root run `compose up dev` to build and run the docker image. The API server's barebones home page is now available at http://localhost:8009. Upload a picture of a coral or kingsnake and see what the model guesses.
+
+The project folder is mounted into the container so it's easy to edit files directly and see the results. The python server automatically reloads if changes are made. If you like coding in VScode then check out my setup in the [backend docs](#vs-code--docker).
+
 ## Deploy Backend Server to Heroku
 
 Prerequisites:

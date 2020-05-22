@@ -76,6 +76,7 @@ interp.plot_top_losses(9)
 # Re-load, learn, train, note the results. Then repeat with a variation.
 
 learn.load("stage-1")
+None
 
 
 # %%
